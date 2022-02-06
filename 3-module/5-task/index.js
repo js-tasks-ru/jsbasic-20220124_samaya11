@@ -1,13 +1,15 @@
 function getMinMax(str) {
   let arr = str.split(' ');
-  let min = Infinity, max = -Infinity;
+  let numArr = [];
 
   for (let value of arr) {
     if(isFinite(value)) {
-      if(+value > max) max = +value;
-      if(+value < min) min = +value;
+      numArr.push(value);
     }
   }
+
+  let min = Math.min.apply(null,numArr);
+  let max = Math.max.apply(null,numArr);
   return {min: min, max: max};
 }
 
