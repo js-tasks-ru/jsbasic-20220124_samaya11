@@ -28,51 +28,55 @@ export default class StepSlider {
 
   </div>`);
 
-  let sliderSteps = slider.querySelector('.slider__steps');
-  let steps = this.steps;
+    let sliderSteps = slider.querySelector('.slider__steps');
+    let steps = this.steps;
 
 
-  for (let i = 0; i < steps; i++){
-    let sliderStep = createElement(`<span></span>`);
-    if (i == 0) {
-      sliderStep.classList.add('slider__step-active');
+    for (let i = 0; i < steps; i++) {
+      let sliderStep = createElement(`<span></span>`);
+      if (i == 0) {
+        sliderStep.classList.add('slider__step-active');
+      }
+      sliderSteps.append(sliderStep);
     }
-    sliderSteps.append(sliderStep);
-  }
 
 
 
-  slider.querySelector('.slider').addEventListener('click', function(event) {
+    slider.addEventListener('click', function (event) {
 
-   let currentValue =  Math.round((event.clientX - slider.querySelector('.slider').getBoundingClientRect().left) * (steps - 1) / slider.querySelector('.slider').offsetWidth);
-   let valuePercents = currentValue / (steps - 1) * 100;
-   slider.querySelector('.slider__thumb').style.left = `${valuePercents}%`;
-   slider.querySelector('.slider__progress').style.width = `${valuePercents}%`;
+      let newValue = (event.clientX - slider.querySelector('.slider').getBoundingClientRect().left) * (steps - 1) / slider.querySelector('.slider').offsetWidth;
 
-   for (let i = 0; i < steps; i++){
-    if (i == currentValue) {
-      sliderSteps.children[i].classList.add('slider__step-active');
-    }
-    else {
-      sliderSteps.children[i].classList.remove('slider__step-active');
-    }
-  }
+      if (newValue >= 0 && newValue < steps - 1) {
+        let currentValue = Math.round(newValue);
+        let valuePercents = currentValue / (steps - 1) * 100;
+        slider.querySelector('.slider__thumb').style.left = `${valuePercents}%`;
+        slider.querySelector('.slider__progress').style.width = `${valuePercents}%`;
 
-  slider.querySelector('.slider__value').textContent = currentValue;
+        for (let i = 0; i < steps; i++) {
+          if (i == currentValue) {
+            sliderSteps.children[i].classList.add('slider__step-active');
+          }
+          else {
+            sliderSteps.children[i].classList.remove('slider__step-active');
+          }
+        }
+
+        slider.querySelector('.slider__value').textContent = currentValue;
 
 
-  if(this.value !== currentValue) {
-    this.value = currentValue;
-    let sliderChangeEvent = new CustomEvent('slider-change', {
-      detail: this.value,
-      bubbles: true
+        if (this.value !== currentValue) {
+          this.value = currentValue;
+          let sliderChangeEvent = new CustomEvent('slider-change', {
+            detail: this.value,
+            bubbles: true
+          });
+          slider.dispatchEvent(sliderChangeEvent);
+        }
+      }
+
     });
-    slider.querySelector('.slider').dispatchEvent(sliderChangeEvent);
-  }
 
-  });
-
-  return slider;
+    return slider;
 
   }
 
