@@ -76,7 +76,6 @@ export default class Modal {
 
     if (event.code === 'Escape' || event.target.closest('button.modal__close')) {
       let closeButton = this.modalInner.querySelector('button.modal__close');
-      console.log('ehf');
       closeButton.removeEventListener('click', this.onClose);
       document.removeEventListener('keydown', this.onClose);
       document.body.classList.remove('is-modal-open');
