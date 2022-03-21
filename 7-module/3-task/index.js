@@ -8,7 +8,7 @@ export default class StepSlider {
   }
 
   createElem() {
-    let slider = createElement(`<div class="container" style="padding: 50px;">
+    let slider = createElement(`
     <!--Корневой элемент слайдера-->
     <div class="slider">
 
@@ -24,9 +24,7 @@ export default class StepSlider {
       <div class="slider__steps">
 
       </div>
-    </div>
-
-  </div>`);
+    </div>`);
 
     let sliderSteps = slider.querySelector('.slider__steps');
     let steps = this.steps;
@@ -44,44 +42,36 @@ export default class StepSlider {
 
     slider.addEventListener('click', function (event) {
 
-      let newValue = (event.clientX - slider.querySelector('.slider').getBoundingClientRect().left) * (steps - 1) / slider.querySelector('.slider').offsetWidth;
+      let currentValue = Math.round((event.clientX - slider.getBoundingClientRect().left) * (steps - 1) / slider.offsetWidth);
+      let valuePercents = currentValue / (steps - 1) * 100;
+      slider.querySelector('.slider__thumb').style.left = `${valuePercents}%`;
+      slider.querySelector('.slider__progress').style.width = `${valuePercents}%`;
 
-      if (newValue >= 0 && newValue < steps - 1) {
-        let currentValue = Math.round(newValue);
-        let valuePercents = currentValue / (steps - 1) * 100;
-        slider.querySelector('.slider__thumb').style.left = `${valuePercents}%`;
-        slider.querySelector('.slider__progress').style.width = `${valuePercents}%`;
-
-        for (let i = 0; i < steps; i++) {
-          if (i == currentValue) {
-            sliderSteps.children[i].classList.add('slider__step-active');
-          }
-          else {
-            sliderSteps.children[i].classList.remove('slider__step-active');
-          }
+      for (let i = 0; i < steps; i++) {
+        if (i == currentValue) {
+          sliderSteps.children[i].classList.add('slider__step-active');
         }
-
-        slider.querySelector('.slider__value').textContent = currentValue;
-
-
-        if (this.value !== currentValue) {
-          this.value = currentValue;
-          let sliderChangeEvent = new CustomEvent('slider-change', {
-            detail: this.value,
-            bubbles: true
-          });
-          slider.dispatchEvent(sliderChangeEvent);
+        else {
+          sliderSteps.children[i].classList.remove('slider__step-active');
         }
       }
+
+      slider.querySelector('.slider__value').textContent = currentValue;
+
+
+      if (this.value != currentValue) {
+        this.value = currentValue;
+        let sliderChangeEvent = new CustomEvent('slider-change', {
+          detail: this.value,
+          bubbles: true
+        });
+        slider.dispatchEvent(sliderChangeEvent);
+      }
+
 
     });
 
     return slider;
 
   }
-
-  setValue(newValue) {
-    this.value = newValue;
-  }
-
 }
